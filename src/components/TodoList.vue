@@ -1,6 +1,6 @@
 <template>
    <transition-group name="list">
-      <ul class="todo-list" v-for="(todo, index) in todos" :key="todo.id">
+      <ul class="todo-list" v-for="todo in todos" :key="todo.id">
          <li :class="{ done: todo.isDone }">
             {{ upperCase(todo.text) }}
             <input type="checkbox" v-model="todo.isDone" />

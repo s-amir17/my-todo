@@ -9,7 +9,7 @@
 
          <div v-if="todos.length" class="bottom">
             <h3 class="tasks">Tasks: {{ doneTodos }}</h3>
-            <button @click="todos = []" class="clear">Clear list</button>
+            <button @click="clearList" class="clear">Clear list</button>
          </div>
          <h3 v-else style="color: red">No todos yet.</h3>
       </div>
@@ -41,19 +41,9 @@ export default {
          localStorage.setItem('todos', JSON.stringify(this.todos));
       },
 
-      completed() {
-         let completedTodos = this.todos.filter(todo => todo.isDone);
-         this.todos = completedTodos;
-      },
-
-      inProcess() {
-         let todosInProcess = this.todos.filter(todo => !todo.isDone);
-         this.todos = todosInProcess;
-      },
-
-      all() {
-         let todosInProcess = [...this.todos];
-         this.todos = todosInProcess;
+      clearList() {
+         this.todos = [];
+         localStorage.setItem('todos', JSON.stringify(this.todos));
       },
    },
 

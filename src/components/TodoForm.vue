@@ -1,21 +1,14 @@
 <template>
-   <form
-      class="todo"
-      @click.prevent>
-      <input
-         v-model="todo.text"
-         ref="inp"
-         type="text"
-         placeholder="your todo . . ." />
-      <button @click="sendTodo(todo)">Add todo</button>
+   <form class="todo" @click.prevent>
+      <input v-model="todo.text" ref="inp" type="text" required placeholder="your todo . . ." />
+      <button @click="sendTodo">Add todo</button>
    </form>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-
 export default {
    name: 'TodoForm',
+
    data() {
       return {
          todo: {
@@ -26,23 +19,15 @@ export default {
    },
 
    methods: {
-      ...mapActions({
-         addTodo: 'addTodo',
-      }),
+      sendTodo() {
+         if (this.todo.text.trim() === '') return;
 
-      sendTodo(todo) {
-         if (this.todo.text.trim() !== '') {
-            console.log(this.todo.text);
-            this.todo.id = this.id;
-            this.addTodo(todo);
-            this.todo = {};
-         }
-      },
-   },
-
-   computed: {
-      id() {
-         return this.$store.getters.todos.length + 1;
+         this.todo.id = Math.random();
+         this.$emit('addTodo', this.todo);
+         this.todo = {
+            text: '',
+            isDone: false,
+         };
       },
    },
 

@@ -2,24 +2,21 @@
    <div>
       <h1>TO-DO list</h1>
       <div class="wrap">
-         <TodoForm></TodoForm>
-         <TodoList></TodoList>
+         <TodoForm @addTodo="addTodo"></TodoForm>
+         <TodoList :todos="todos" @removeTodo="removeTodo"></TodoList>
 
-         <div v-if="todos.length">
-            <hr />
+         <hr v-show="todos.length" />
+
+         <div v-if="todos.length" class="bottom">
             <h3 class="tasks">Tasks: {{ doneTodos }}</h3>
+            <button @click="todos = []" class="clear">Clear list</button>
          </div>
-         <h3
-            v-else
-            style="color: red">
-            No todos yet.
-         </h3>
+         <h3 v-else style="color: red">No todos yet.</h3>
       </div>
    </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 import TodoForm from './components/TodoForm.vue';
 import TodoList from './components/TodoList.vue';
 
@@ -27,8 +24,48 @@ export default {
    name: 'App',
    components: { TodoForm, TodoList },
 
+   data() {
+      return {
+         todos: [],
+      };
+   },
+
+   methods: {
+      addTodo(todo) {
+         this.todos.push(todo);
+         localStorage.setItem('todos', JSON.stringify(this.todos));
+      },
+
+      removeTodo(id) {
+         this.todos = this.todos.filter(todo => todo.id !== id);
+         localStorage.setItem('todos', JSON.stringify(this.todos));
+      },
+
+      completed() {
+         let completedTodos = this.todos.filter(todo => todo.isDone);
+         this.todos = completedTodos;
+      },
+
+      inProcess() {
+         let todosInProcess = this.todos.filter(todo => !todo.isDone);
+         this.todos = todosInProcess;
+      },
+
+      all() {
+         let todosInProcess = [...this.todos];
+         this.todos = todosInProcess;
+      },
+   },
+
    computed: {
-      ...mapGetters(['todos', 'doneTodos']),
+      doneTodos() {
+         return this.todos.filter(todo => !todo.isDone).length;
+      },
+   },
+
+   mounted() {
+      let t = JSON.parse(localStorage.getItem('todos'));
+      this.todos = t;
    },
 };
 </script>
@@ -48,6 +85,7 @@ export default {
    justify-content: center;
    align-items: center;
 }
+
 h1 {
    margin: 25px 0;
    text-align: center;
@@ -61,15 +99,25 @@ h1 {
    width: 550px;
    background-color: rgb(244, 244, 244);
    background-color: darkslategrey;
-   padding: 25px;
    border-radius: 10px;
-   word-wrap: break-word;
+   padding: 25px;
+   margin: 15px;
 }
 
 hr {
    margin: 5px 0;
 }
-.tasks {
-   color: burlywood;
+
+.bottom {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   .tasks {
+      color: burlywood;
+   }
+   .clear {
+      padding: 5px;
+      cursor: pointer;
+   }
 }
 </style>
